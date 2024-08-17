@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Material Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Study Material Chatbot</h1>
+    <div>
+        <textarea id="userInput" rows="4" cols="50" placeholder="Ask me about AI or Data Science syllabus..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div id="response"></div>
+
+    <script>
+        function sendMessage() {
+            const userMessage = document.getElementById('userInput').value;
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userMessage }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                let responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = '<p>' + data.message + '</p>';
+                if (data.materials) {
+                    data.materials.forEach(material => {
+                        responseDiv.innerHTML += <p><a href="${material.link}" target="_blank">${material.title}</a></p>;
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
